@@ -1,0 +1,3 @@
+docker-cleanup.sh
+__pycache__
+*.pyc

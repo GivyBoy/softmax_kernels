@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  softmax-benchmark:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: softmax-benchmark
+    command: ["--rows", "4096", "--cols", "4096", "--runs", "10", "--warmup", "5"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
