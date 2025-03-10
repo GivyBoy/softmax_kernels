@@ -127,6 +127,26 @@ def run_benchmarks(rows, cols, num_runs=10, warmup_runs=5):
         softmax_cuda.online_softmax_shared_mem, x, num_runs, warmup_runs
     )
 
+    print("\n=== Shared Memory (w/ vectorization) Softmax Benchmark ===")
+    shared_mem_vectorized_output, shared_mem_vectorized_times = benchmark_custom_softmax(
+        softmax_cuda.online_softmax_shared_mem_vectorized, x, num_runs, warmup_runs
+    )
+
+    print("\n=== Manual Vectorized Softmax Benchmark ===")
+    vectorized_output, vectorized_times = benchmark_custom_softmax(
+        softmax_cuda.online_softmax_vectorized, x, num_runs, warmup_runs
+    )
+
+    print("\n=== Warp Optimized Softmax Benchmark ===")
+    warp_optimized_output, warp_optimized_times = benchmark_custom_softmax(
+        softmax_cuda.online_softmax_warp_optimized, x, num_runs, warmup_runs
+    )
+
+    print("\n=== Cooperative Groups Softmax Benchmark ===")
+    cooperative_output, cooperative_times = benchmark_custom_softmax(
+        softmax_cuda.online_softmax_cooperative, x, num_runs, warmup_runs
+    )
+
     # Check correctness
     print("\n=== Correctness Check ===")
     print("Comparing PyTorch vs Naive Softmax:")
@@ -137,6 +157,18 @@ def run_benchmarks(rows, cols, num_runs=10, warmup_runs=5):
 
     print("\nComparing PyTorch vs Shared Memory Softmax:")
     check_correctness(pytorch_output, shared_mem_output)
+
+    print("\nComparing PyTorch vs Shared Memory (w/ vectorization) Softmax:")
+    check_correctness(pytorch_output, shared_mem_vectorized_output)
+
+    print("\nComparing PyTorch vs Manual Vectorized Softmax:")
+    check_correctness(pytorch_output, vectorized_output)
+
+    print("\nComparing PyTorch vs Warp Optimized Softmax:")
+    check_correctness(pytorch_output, warp_optimized_output)
+
+    print("\nComparing PyTorch vs Cooperative Groups Softmax:")
+    check_correctness(pytorch_output, cooperative_output)
 
     # Performance comparison
     print("\n=== Performance Comparison ===")
@@ -164,6 +196,30 @@ def run_benchmarks(rows, cols, num_runs=10, warmup_runs=5):
     shared_min = np.min(shared_mem_times)
     print(
         f"{'Shared Memory Softmax':<25} {shared_mean:.4f}{'ms':<10} {shared_min:.4f}{'ms':<10} {pytorch_mean/shared_mean:.2f}{'x':<20}"
+    )
+
+    shared_mem_vectorized_mean = np.mean(shared_mem_vectorized_times)
+    shared_mem_vectorized_min = np.min(shared_mem_vectorized_times)
+    print(
+        f"{'Shared Memory (w/ vectorization) Softmax':<25} {shared_mem_vectorized_mean:.4f}{'ms':<10} {shared_mem_vectorized_min:.4f}{'ms':<10} {pytorch_mean/shared_mem_vectorized_mean:.2f}{'x':<20}"
+    )
+
+    vectorized_mean = np.mean(vectorized_times)
+    vectorized_min = np.min(vectorized_times)
+    print(
+        f"{'Manual Vectorized Softmax':<35} {vectorized_mean:.4f}{'ms':<10} {vectorized_min:.4f}{'ms':<10} {pytorch_mean/vectorized_mean:.2f}{'x':<20}"
+    )
+
+    warp_optimized_mean = np.mean(warp_optimized_times)
+    warp_optimized_min = np.min(warp_optimized_times)
+    print(
+        f"{'Warp Optimized Softmax':<35} {warp_optimized_mean:.4f}{'ms':<10} {warp_optimized_min:.4f}{'ms':<10} {pytorch_mean/warp_optimized_mean:.2f}{'x':<20}"
+    )
+
+    cooperative_mean = np.mean(cooperative_times)
+    cooperative_min = np.min(cooperative_times)
+    print(
+        f"{'Cooperative Groups Softmax':<35} {cooperative_mean:.4f}{'ms':<10} {cooperative_min:.4f}{'ms':<10} {pytorch_mean/cooperative_mean:.2f}{'x':<20}"
     )
 
 

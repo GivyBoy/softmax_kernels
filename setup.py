@@ -38,6 +38,7 @@ setup(
                     "--use_fast_math",
                     "--extended-lambda",
                     "--expt-relaxed-constexpr",
+                    "--default-stream=per-thread",  # required for cooperative groups
                     "-Xcompiler",
                     "-fPIC",
                 ],
