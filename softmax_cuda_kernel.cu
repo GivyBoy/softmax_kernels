@@ -723,7 +723,7 @@ torch::Tensor online_softmax_shared_mem_cuda(torch::Tensor input)
     auto output = torch::empty_like(input);
 
     const int threads = 1024;
-    const int blocks = rows; // One block per row as in original code
+    const int blocks = rows; // one block per row
 
     online_softmax_shared_mem_kernel<<<blocks, threads>>>(
         input.data_ptr<float>(),
@@ -741,10 +741,10 @@ torch::Tensor online_softmax_shared_mem_vectorized_cuda(torch::Tensor input)
     auto output = torch::empty_like(input);
 
     const int threads = 1024;
-    const int blocks = rows; // One block per row as in original code
+    const int blocks = rows; // one block per row
 
-    // Calculate required shared memory size (in bytes)
-    // We need threads * sizeof(float) bytes for reduction
+    // calculate required shared memory size (in bytes)
+    // need threads * sizeof(float) bytes for reduction
     const int smem_size = threads * sizeof(float);
 
     online_softmax_shared_mem_vectorized_kernel<<<blocks, threads, smem_size>>>(
@@ -763,7 +763,7 @@ torch::Tensor online_softmax_vectorized_cuda(torch::Tensor input)
     auto output = torch::empty_like(input);
 
     const int threads = 512;
-    const int blocks = rows; // One block per row
+    const int blocks = rows; // one block per row
 
     online_softmax_vectorized_kernel<<<blocks, threads>>>(
         input.data_ptr<float>(),
@@ -781,7 +781,7 @@ torch::Tensor online_softmax_warp_optimized_cuda(torch::Tensor input)
     auto output = torch::empty_like(input);
 
     const int threads = 512;
-    const int blocks = rows; // One block per row
+    const int blocks = rows; // one block per row
 
     online_softmax_warp_optimized_kernel<<<blocks, threads>>>(
         input.data_ptr<float>(),
@@ -799,7 +799,7 @@ torch::Tensor online_softmax_cooperative_cuda(torch::Tensor input)
     auto output = torch::empty_like(input);
 
     const int threads = 1024;
-    const int blocks = rows; // One block per row
+    const int blocks = rows; // one block per row
 
     online_softmax_cooperative_kernel<<<blocks, threads>>>(
         input.data_ptr<float>(),
